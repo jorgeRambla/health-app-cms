@@ -1,15 +1,14 @@
 version: '3'
 services:
-  strapi:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    image: health-app-cms:latest
+  mystrapi:
+    container_name: mystrapi
+    build: .
+    image: mystrapi:latest
     restart: unless-stopped
     env_file: .env
     environment:
       DATABASE_CLIENT: ${DATABASE_CLIENT}
-      DATABASE_HOST: db
+      DATABASE_HOST: mystrapiDB
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PORT: ${DATABASE_PORT}
@@ -17,36 +16,48 @@ services:
       ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       NODE_ENV: ${NODE_ENV}
+    volumes:
+      - ./.env:/opt/app/.env
     ports:
       - '1337:1337'
     networks:
-      - strapi
+      - mystrapi
     depends_on:
-      - db
+      - mystrapiDB
 
-  db:
+  mystrapiDB:
+    container_name: mystrapiDB
     platform: linux/amd64 #for platform error on Apple M1 chips
     restart: unless-stopped
     env_file: .env
-    image: mysql:8
-    command: --default-authentication-plugin=mysql_native_password
+    image: postgres:14.5-alpine
     environment:
-      MYSQL_USER: ${DATABASE_USERNAME}
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_DATABASE: ${DATABASE_NAME}
-      MYSQL_ROOT_HOST: '%'
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
     volumes:
-      - cms-db-data:/var/lib/mysql
-      - ./data:/var/lib/mysql/data/ # if you want to use a bind folder
-    ports:
-      - '3306:3306'
+      - mystrapi-data:/var/lib/postgresql/data/ #using a volume
+      #- ./data:/var/lib/postgresql/data/ # if you want to use a bind folder
     networks:
-      - strapi
+      - mystrapi
+
+  mystrapiAdminer:
+    container_name: mystrapiAdminer
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - '9090:8080'
+    environment:
+      - ADMINER_DEFAULT_SERVER=mystrapiDB
+    networks:
+      - mystrapi
+    depends_on:
+      - mystrapiDB
 
 volumes:
-  cms-db-data:
+  mystrapi-data:
 
 networks:
-  strapi:
+  mystrapi:
+    name: Mystrapi
     driver: bridge
