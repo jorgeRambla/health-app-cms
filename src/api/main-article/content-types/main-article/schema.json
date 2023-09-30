@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "main_articles",
+  "info": {
+    "singularName": "main-article",
+    "pluralName": "main-articles",
+    "displayName": "Main-article",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "subtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "readingTime": {
+      "type": "integer",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "body": {
+      "type": "customField",
+      "options": {
+        "preset": "toolbar"
+      },
+      "customField": "plugin::ckeditor5.CKEditor"
+    },
+    "subCategory": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::main-sub-category.main-sub-category",
+      "inversedBy": "articles"
+    }
+  }
+}

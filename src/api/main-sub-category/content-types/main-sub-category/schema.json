@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "main_sub_categories",
+  "info": {
+    "singularName": "main-sub-category",
+    "pluralName": "main-sub-categories",
+    "displayName": "Main-sub-category",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "text"
+    },
+    "articles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::main-article.main-article",
+      "mappedBy": "subCategory"
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::main-category.main-category",
+      "inversedBy": "subCategories"
+    }
+  }
+}
